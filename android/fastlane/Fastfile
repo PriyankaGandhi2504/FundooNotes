@@ -1,0 +1,63 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+# fastlane_version "2.28.3"
+
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+ desc "Runs all the tests"
+ lane :test do
+   gradle(task:'assemble assembleAndroidTest')
+ end
+
+lane :screenshots do
+ capture_android_screenshots
+end
+
+ desc "Submit a new Beta Build to Crashlytics Beta"
+ lane :beta do
+   gradle(task: "clean assembleRelease")
+ firebase_app_distribution(
+          app: "1:228889421337:android:28e709067e583f37496c88",
+          testers: "priyankagandhi214@gmail.com",
+          release_notes: "Release Notes Via Fastlane",
+          firebase_cli_path: “/usr/local/bin/firebase”,
+          apk_path: "/Users/bridgelabz/Priyanka/fundoonotes/android/app/release/app-release.apk"
+    )
+
+   # sh "your_script.sh"
+   # You can also use other beta testing services here
+ end
+
+ desc "Deploy a new version to the Google Play"
+ lane :deploy do
+   gradle(task: "clean assembleRelease")
+   upload_to_play_store
+ end
+end
